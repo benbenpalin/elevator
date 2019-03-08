@@ -10,9 +10,10 @@
     (assoc db :page page)))
 
 (rf/reg-event-db
-  :set-docs
+  :set-init
   (fn [db [_ docs]]
-    (assoc db :docs docs)))
+    (assoc db :docs docs
+              :selected-floors #{})))
 
 (rf/reg-event-fx
   :fetch-docs
@@ -20,12 +21,17 @@
     {:http-xhrio {:method          :get
                   :uri             "/docs"
                   :response-format (ajax/raw-response-format)
-                  :on-success       [:set-docs]}}))
+                  :on-success       [:set-init]}}))
 
 (rf/reg-event-db
   :common/set-error
   (fn [db [_ error]]
     (assoc db :common/error error)))
+
+(rf/reg-event-db
+  :select-new-floor
+  (fn [db [_ floor]]
+    (update db :selected-floors #(conj % floor))))
 
 ;;subscriptions
 
@@ -38,6 +44,11 @@
   :docs
   (fn [db _]
     (:docs db)))
+
+(rf/reg-sub
+  :selected-floors
+  (fn [db _]
+    (:selected-floors db)))
 
 (rf/reg-sub
   :common/error

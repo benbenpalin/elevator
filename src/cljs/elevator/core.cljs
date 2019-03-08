@@ -36,18 +36,31 @@
        [nav-link "#/" "Home" :home]
        [nav-link "#/about" "About" :about]]]]))
 
+
+
 (defn about-page []
   [:div.container
-   [:div.row
-    [:div.col-md-12
-     [:img {:src "/img/warning_clojure.png"}]]]])
+   "About"])
+
+(defn floor-button [floor-number]
+  [:span {:on-click #(rf/dispatch [:select-new-floor floor-number]) :style {:padding-right "100px" :cursor "pointer"}}
+   floor-number])
+
+(defn button-panel []
+  (let [selected-floors @(rf/subscribe [:selected-floors])]
+    [:div
+     [:div
+      [floor-button 1]
+      [floor-button 2]]
+     [:div
+      [floor-button 3]
+      [floor-button 4]]
+     [:div (str "floor selected is " selected-floors)]]))
 
 (defn home-page []
   [:div.container
-   (when-let [docs @(rf/subscribe [:docs])]
-     [:div.row>div.col-sm-12
-      [:div {:dangerouslySetInnerHTML
-             {:__html (md->html docs)}}]])])
+   "Elevator"
+   [button-panel]])
 
 (def pages
   {:home #'home-page
