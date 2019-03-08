@@ -47,7 +47,11 @@
    floor-number])
 
 (defn button-panel []
-  (let [selected-floors @(rf/subscribe [:selected-floors])]
+  (let [selected-floors @(rf/subscribe [:selected-floors])
+        in-motion?      @(rf/subscribe [:in-motion?])
+        current-floor   @(rf/subscribe [:current-floor])
+        next-stop       @(rf/subscribe [:next-stop])
+        direction       @(rf/subscribe [:direction])]
     [:div
      [:div
       [floor-button 1]
@@ -55,7 +59,11 @@
      [:div
       [floor-button 3]
       [floor-button 4]]
-     [:div (str "floor selected is " selected-floors)]]))
+     [:div (str "floor selected is " selected-floors)]
+     [:div (str "Is the elevator in motion? " in-motion?)]
+     [:div (str "what is the current floor " current-floor)]
+     [:div (str "next stop: " next-stop)]
+     [:div (str "Elevator is going " direction)]]))
 
 (defn home-page []
   [:div.container
