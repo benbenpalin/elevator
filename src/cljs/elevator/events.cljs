@@ -14,7 +14,7 @@
   (fn [db [_ docs]]
     (assoc db :docs docs
               :selected-floors #{}
-              :current-floor 2
+              :current-floor 1
               :in-motion? false
               :direction :up)))
 
@@ -31,7 +31,6 @@
   (fn [db [_ error]]
     (assoc db :common/error error)))
 
-
 (defn get-next-stop
   "Takes the set of selected floors, the current floor the elevator is at, and the direction the elevator is going, and returns the next floor the elevator will stop at"
   [floor-set current-floor direction]
@@ -44,6 +43,18 @@
          (filter #(< % current-floor))
          (sort)
          (last))))
+
+(rf/reg-event-fx
+  :hit-button
+  (fn [{:keys [db]}]
+    {:dispatch-later [{:ms 1000 :dispatch [:increase-floor]}]}))
+
+(rf/reg-event-fx
+  :increase-floor
+  (fn [{:keys [db]}]
+    (if (not= (:next-stop db) (:current-floor db))
+      {:db (update db :current-floor inc)
+       :dispatch [:hit-button]})))
 
 (rf/reg-event-db
   :select-new-floor

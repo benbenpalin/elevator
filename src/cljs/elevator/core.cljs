@@ -36,8 +36,6 @@
        [nav-link "#/" "Home" :home]
        [nav-link "#/about" "About" :about]]]]))
 
-
-
 (defn about-page []
   [:div.container
    "About"])
@@ -45,6 +43,9 @@
 (defn floor-button [floor-number]
   [:span {:on-click #(rf/dispatch [:select-new-floor floor-number]) :style {:padding-right "100px" :cursor "pointer"}}
    floor-number])
+
+;(defn going-up []
+;  (repeatedly (js/setTimeout #(rf/dispatch [:increase-floor]) 1000)))
 
 (defn button-panel []
   (let [selected-floors @(rf/subscribe [:selected-floors])
@@ -63,7 +64,9 @@
      [:div (str "Is the elevator in motion? " in-motion?)]
      [:div (str "what is the current floor " current-floor)]
      [:div (str "next stop: " next-stop)]
-     [:div (str "Elevator is going " direction)]]))
+     [:div (str "Elevator is going " direction)]
+     [:span {:on-click #(rf/dispatch [:increase-floor]) :style {:padding-right "100px" :cursor "pointer"}}
+      "click for new floor"]]))
 
 (defn home-page []
   [:div.container
