@@ -44,9 +44,6 @@
   [:span {:on-click #(rf/dispatch [:select-new-floor floor-number]) :style {:padding-right "100px" :cursor "pointer"}}
    floor-number])
 
-;(defn going-up []
-;  (repeatedly (js/setTimeout #(rf/dispatch [:increase-floor]) 1000)))
-
 (defn button-panel []
   (let [selected-floors @(rf/subscribe [:selected-floors])
         in-motion?      @(rf/subscribe [:in-motion?])

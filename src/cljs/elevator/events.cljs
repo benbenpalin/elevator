@@ -45,10 +45,10 @@
 (rf/reg-event-fx
   :move-floor
   (fn [{:keys [db]} [_ direction]]
-    {:dispatch-later [{:ms 1000 :dispatch [:increase-floor direction]}]}))
+    {:dispatch-later [{:ms 1000 :dispatch [:change-floor direction]}]}))
 
 (rf/reg-event-fx
-  :increase-floor
+  :change-floor
   (fn [{:keys [db]} [_ direction]]
     (let [direction-fn (direction-fn direction)]
       (if (not (at-next-stop? db))
