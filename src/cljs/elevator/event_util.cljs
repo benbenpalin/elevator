@@ -29,7 +29,7 @@
 
 (defn at-next-stop?
   "Takes the state db and returns true if the elevator has arrived at the next
-  stop, false if it has not"
+  stop, false if it has not. This is only to be used when the elevator is in motion"
   [db]
   (= (:next-stop db) (:current-floor db)))
 

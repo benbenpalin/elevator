@@ -2,11 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="90f1830c-821f-44a1-ab2f-66b0cb4c9dca" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/cljs/elevator/event_util_test.cljs" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/elevator/events.cljs" afterPath="$PROJECT_DIR$/src/cljs/elevator/events.cljs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/cljs/elevator/core_test.cljs" afterPath="$PROJECT_DIR$/test/cljs/elevator/core_test.cljs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/cljs/elevator/doo_runner.cljs" afterPath="$PROJECT_DIR$/test/cljs/elevator/doo_runner.cljs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/elevator.iml" afterPath="$PROJECT_DIR$/elevator.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/elevator/core.js" afterPath="$PROJECT_DIR$/out/elevator/core.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/elevator/doo_runner.js" afterPath="$PROJECT_DIR$/out/elevator/doo_runner.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/elevator/event_util.js" afterPath="$PROJECT_DIR$/out/elevator/event_util.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/elevator/event_util_test.js" afterPath="$PROJECT_DIR$/out/elevator/event_util_test.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/elevator/events.js" afterPath="$PROJECT_DIR$/out/elevator/events.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/cljs/elevator/event_util.cljs" afterPath="$PROJECT_DIR$/src/cljs/elevator/event_util.cljs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/cljs/elevator/event_util_test.cljs" afterPath="$PROJECT_DIR$/test/cljs/elevator/event_util_test.cljs" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -32,7 +36,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="events.cljs" pinned="false" current-in-tab="true">
+      <file leaf-file-name="events.cljs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/cljs/elevator/events.cljs">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1062">
@@ -42,31 +46,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="doo_runner.cljs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/cljs/elevator/doo_runner.cljs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="54">
-              <caret line="3" column="40" lean-forward="true" selection-start-line="3" selection-start-column="40" selection-end-line="3" selection-end-column="40" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="core_test.cljs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/cljs/elevator/core_test.cljs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="108">
-              <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="1" selection-end-line="7" selection-end-column="22" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="event_util_test.cljs" pinned="false" current-in-tab="false">
+      <file leaf-file-name="event_util_test.cljs" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/cljs/elevator/event_util_test.cljs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+            <state relative-caret-position="126">
+              <caret line="7" column="21" lean-forward="false" selection-start-line="7" selection-start-column="21" selection-end-line="7" selection-end-column="21" />
               <folding />
             </state>
           </provider>
@@ -75,8 +59,8 @@
       <file leaf-file-name="event_util.cljs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/cljs/elevator/event_util.cljs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="864">
-              <caret line="48" column="0" lean-forward="false" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
+            <state relative-caret-position="558">
+              <caret line="31" column="83" lean-forward="false" selection-start-line="31" selection-start-column="83" selection-end-line="31" selection-end-column="83" />
               <folding />
             </state>
           </provider>
@@ -116,12 +100,12 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/cljs/elevator/event_util.cljs" />
         <option value="$PROJECT_DIR$/src/cljs/elevator/core.cljs" />
         <option value="$PROJECT_DIR$/src/cljs/elevator/events.cljs" />
-        <option value="$PROJECT_DIR$/test/cljs/elevator/event_util_test.cljs" />
         <option value="$PROJECT_DIR$/test/cljs/elevator/doo_runner.cljs" />
         <option value="$PROJECT_DIR$/test/cljs/elevator/core_test.cljs" />
+        <option value="$PROJECT_DIR$/src/cljs/elevator/event_util.cljs" />
+        <option value="$PROJECT_DIR$/test/cljs/elevator/event_util_test.cljs" />
       </list>
     </option>
   </component>
@@ -440,10 +424,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/cljs/elevator/doo_runner.cljs">
+    <entry file="file://$PROJECT_DIR$/src/cljs/elevator/events.cljs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="3" column="40" lean-forward="true" selection-start-line="3" selection-start-column="40" selection-end-line="3" selection-end-column="40" />
+        <state relative-caret-position="1062">
+          <caret line="59" column="16" lean-forward="false" selection-start-line="59" selection-start-column="16" selection-end-line="59" selection-end-column="16" />
           <folding />
         </state>
       </provider>
@@ -456,26 +440,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/test/cljs/elevator/doo_runner.cljs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="40" lean-forward="true" selection-start-line="3" selection-start-column="40" selection-end-line="3" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/cljs/elevator/event_util.cljs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="864">
-          <caret line="48" column="0" lean-forward="false" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
+        <state relative-caret-position="558">
+          <caret line="31" column="83" lean-forward="false" selection-start-line="31" selection-start-column="83" selection-end-line="31" selection-end-column="83" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/cljs/elevator/event_util_test.cljs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cljs/elevator/events.cljs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1062">
-          <caret line="59" column="16" lean-forward="false" selection-start-line="59" selection-start-column="16" selection-end-line="59" selection-end-column="16" />
+        <state relative-caret-position="126">
+          <caret line="7" column="21" lean-forward="false" selection-start-line="7" selection-start-column="21" selection-end-line="7" selection-end-column="21" />
           <folding />
         </state>
       </provider>
