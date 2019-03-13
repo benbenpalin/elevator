@@ -11,47 +11,58 @@
             [secretary.core :as secretary])
   (:import goog.History))
 
-; the navbar components are implemented via baking-soda [1]
-; library that provides a ClojureScript interface for Reactstrap [2]
-; Bootstrap 4 components.
-; [1] https://github.com/gadfly361/baking-soda
-; [2] http://reactstrap.github.io/
-
-(defn about-page []
-  [:div.container
-   "About"])
+(def elevator-numbers (range 1 10))
 
 (defn floor-button [floor-number]
-  [:span {:on-click #(rf/dispatch [:select-new-floor floor-number]) :style {:padding-right "100px" :cursor "pointer"}}
-   floor-number])
+  (let [selected-floors @(rf/subscribe [:selected-floors])]
+    [:span {:on-click #(rf/dispatch [:select-new-floor floor-number]) :style {:padding "0 20px" :cursor "pointer" :color (if (selected-floors floor-number)
+                                                                                                                           "red"
+                                                                                                                           "black")}}
+     floor-number]))
 
-(defn button-panel []
-  (let [selected-floors @(rf/subscribe [:selected-floors])
-        in-motion?      @(rf/subscribe [:in-motion?])
-        current-floor   @(rf/subscribe [:current-floor])
-        next-stop       @(rf/subscribe [:next-stop])
-        direction       @(rf/subscribe [:direction])
-        door-status     @(rf/subscribe [:door-status])
-        at-stop?     @(rf/subscribe [:at-stop?])]
-    [:div
-     [:div
-      [floor-button 1]
-      [floor-button 2]]
-     [:div
-      [floor-button 3]
-      [floor-button 4]]
-     [:div (str "floor selected is " selected-floors)]
-     [:div (str "Is the elevator in motion? " in-motion?)]
-     [:div (str "what is the current floor " current-floor)]
-     [:div (str "next stop: " next-stop)]
-     [:div (str "Elevator is going " direction)]
-     [:div (str "door is " door-status)]
-     [:div (str "at a stop? " at-stop?)]]))
+(defn make-panel-row [buttons]
+  [:div
+   (for [b buttons]
+     [floor-button b])])
+
+
+(defn make-panel [buttons]
+  [:div
+   (->> buttons
+        (partition 3)
+        (map make-panel-row))])
+
+(defn button-panel [numbers]
+  [:div {:style {:text-align "center"}}
+   (make-panel numbers)])
+
+(defn display []
+  (let [current-floor   @(rf/subscribe [:current-floor])]
+    [:div {:style {:margin-top "40px" :font-size "28px"}}
+     [:div (str current-floor)]]))
+
+(defn doors []
+  (let [door-status     @(rf/subscribe [:door-status])]
+    [:div.doors {:style {:width "50%" :display "inline-block"
+                         :border "1px solid black" :height "80%"
+                         :background-color (if (= :open door-status)
+                                             "black"
+                                             "white")
+                         :position "absolute" :bottom "0" :left "0"
+                         :margin-left "100px"}}]))
+
+
+(defn panel-right []
+  [:div {:style {:margin "0 50px 300px 0" :display "inline-block" :border "1px solid black" :position "absolute" :bottom "0" :right "0"}}
+   [button-panel elevator-numbers]])
 
 (defn home-page []
-  [:div.container
-   "Elevator"
-   [button-panel]])
+  [:div.container {:style {:margin "40px auto 0 auto" :display "block"}}
+   [:div.elevator {:style {:text-align "center" :border "1px solid black" :height "90vh" :width "90vh"  :position "relative"}}
+    [display]
+    [:div {:style {:height "100%" :width "100%"}}
+     [doors]
+     [panel-right]]]])
 
 (def pages
   {:home #'home-page})
