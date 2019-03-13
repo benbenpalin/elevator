@@ -14,13 +14,17 @@
 (def elevator-numbers (range 1 10))
 
 (defn floor-button [floor-number]
-  [:span.button {:style {:padding-right "20px" :cursor "pointer" :text-align "center"}}
-   floor-number])
+  (let [selected-floors @(rf/subscribe [:selected-floors])]
+    [:span {:on-click #(rf/dispatch [:select-new-floor floor-number]) :style {:padding "0 20px" :cursor "pointer" :color (if (selected-floors floor-number)
+                                                                                                                           "red"
+                                                                                                                           "black")}}
+     floor-number]))
 
 (defn make-panel-row [buttons]
   [:div
    (for [b buttons]
      [floor-button b])])
+
 
 (defn make-panel [buttons]
   [:div
@@ -29,38 +33,34 @@
         (map make-panel-row))])
 
 (defn button-panel [numbers]
-  [:div {:style {:margin-top "15vh" :text-align "center"}}
+  [:div {:style {:text-align "center"}}
    (make-panel numbers)])
 
 (defn display []
-  (let [selected-floors @(rf/subscribe [:selected-floors])
-        in-motion?      @(rf/subscribe [:in-motion?])
-        current-floor   @(rf/subscribe [:current-floor])
-        next-stop       @(rf/subscribe [:next-stop])
-        direction       @(rf/subscribe [:direction])
-        door-status     @(rf/subscribe [:door-status])
-        at-stop?     @(rf/subscribe [:at-stop?])]
-    [:div
-     [:div (str selected-floors)]
-     [:div (str current-floor)]
-     [:div door-status]]))
-
-(defn empty-left []
-  [:div.empty-left {:style {:width "25%" :display "inline-block" :border "1px solid black" :height "100%"}}])
+  (let [current-floor   @(rf/subscribe [:current-floor])]
+    [:div {:style {:margin-top "40px" :font-size "28px"}}
+     [:div (str current-floor)]]))
 
 (defn doors []
-  [:div.doors {:style {:width "50%" :display "inline-block" :border "1px solid black" :height "100%"}}])
+  (let [door-status     @(rf/subscribe [:door-status])]
+    [:div.doors {:style {:width "50%" :display "inline-block"
+                         :border "1px solid black" :height "80%"
+                         :background-color (if (= :open door-status)
+                                             "black"
+                                             "white")
+                         :position "absolute" :bottom "0" :left "0"
+                         :margin-left "100px"}}]))
+
 
 (defn panel-right []
-  [:div {:style {:width "25%" :display "inline-block" :border "1px solid black" :height "100%"}}
+  [:div {:style {:margin "0 50px 300px 0" :display "inline-block" :border "1px solid black" :position "absolute" :bottom "0" :right "0"}}
    [button-panel elevator-numbers]])
 
 (defn home-page []
   [:div.container {:style {:margin "40px auto 0 auto" :display "block"}}
-   [:div.elevator {:style {:text-align "center" :border "1px solid black" :height "90vh" :width "90vh"}}
+   [:div.elevator {:style {:text-align "center" :border "1px solid black" :height "90vh" :width "90vh"  :position "relative"}}
     [display]
     [:div {:style {:height "100%" :width "100%"}}
-     [empty-left]
      [doors]
      [panel-right]]]])
 
