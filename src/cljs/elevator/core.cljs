@@ -52,7 +52,9 @@
         in-motion?      @(rf/subscribe [:in-motion?])
         current-floor   @(rf/subscribe [:current-floor])
         next-stop       @(rf/subscribe [:next-stop])
-        direction       @(rf/subscribe [:direction])]
+        direction       @(rf/subscribe [:direction])
+        door-status     @(rf/subscribe [:door-status])
+        at-stop?     @(rf/subscribe [:at-stop?])]
     [:div
      [:div
       [floor-button 1]
@@ -65,8 +67,8 @@
      [:div (str "what is the current floor " current-floor)]
      [:div (str "next stop: " next-stop)]
      [:div (str "Elevator is going " direction)]
-     [:span {:on-click #(rf/dispatch [:increase-floor]) :style {:padding-right "100px" :cursor "pointer"}}
-      "click for new floor"]]))
+     [:div (str "door is " door-status)]
+     [:div (str "at a stop? " at-stop?)]]))
 
 (defn home-page []
   [:div.container
@@ -113,6 +115,6 @@
 (defn init! []
   (rf/dispatch-sync [:navigate :home])
   (ajax/load-interceptors!)
-  (rf/dispatch [:fetch-docs])
+  (rf/dispatch [:set-init])
   (hook-browser-navigation!)
   (mount-components))

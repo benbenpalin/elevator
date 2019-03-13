@@ -12,11 +12,12 @@
 (rf/reg-event-db
   :set-init
   (fn [db [_ docs]]
-    (assoc db :docs docs
-              :selected-floors #{}
+    (assoc db :selected-floors #{}
               :current-floor 1
               :in-motion? false
-              :direction :up)))
+              :direction :up
+              :door-status :closed
+              :at-stop? false)))
 
 (rf/reg-event-fx
   :fetch-docs
@@ -44,35 +45,65 @@
          (sort)
          (last))))
 
+
+
 (rf/reg-event-fx
-  :hit-button
+  :open-doors
   (fn [{:keys [db]}]
-    {:dispatch-later [{:ms 1000 :dispatch [:increase-floor]}]}))
+    {:db (assoc db :door-status :open)
+     :dispatch-later [{:ms 2000 :dispatch [:close-doors]}]}))
+
+(rf/reg-event-fx
+  :close-doors
+  (fn [{:keys [db]}]
+    (let [{:keys [selected-floors direction current-floor]} db]
+      (if (seq selected-floors)
+        (let [new-direction (if (= :up direction)
+                              (if (seq (filter #(> % current-floor) selected-floors))
+                                :up
+                                :down)
+                              (if (seq (filter #(< % current-floor) selected-floors))
+                                :down
+                                :up))
+              next-stop (get-next-stop selected-floors current-floor new-direction)]
+          {:db (assoc db :door-status :closed :direction new-direction :next-stop next-stop)
+           :dispatch [:move-floor new-direction]})
+        {:db (assoc db :door-status :closed :in-motion? false :next-stop nil)}))))
+
+(rf/reg-event-fx
+  :move-floor
+  (fn [{:keys [db]} [_ direction]]
+    {:dispatch-later [{:ms 1000 :dispatch [:increase-floor direction]}]}))
 
 (rf/reg-event-fx
   :increase-floor
-  (fn [{:keys [db]}]
-    (if (not= (:next-stop db) (:current-floor db))
-      {:db (update db :current-floor inc)
-       :dispatch [:hit-button]})))
+  (fn [{:keys [db]} [_ direction]]
+    (let [direction-fn (if (= :up direction) inc dec)]
+      (if (not= (:next-stop db) (:current-floor db))
+        {:db (update db :current-floor direction-fn)
+         :dispatch [:move-floor direction]}
+        {:db (update db :selected-floors #(disj % (:current-floor db)))
+         :dispatch [:open-doors]}))))
 
-(rf/reg-event-db
+(rf/reg-event-fx
   :select-new-floor
-  (fn [db [_ floor]]
-    (let [{:keys [selected-floors in-motion? direction current-floor]} db
+  (fn [{:keys [db]} [_ floor]]
+    (let [{:keys [selected-floors in-motion? direction current-floor in-motion?]} db
           selected-floors (conj selected-floors floor)
           new-direction (if in-motion?
                           direction
                           (if (> floor current-floor)
                             :up
                             :down))]
+      (if-not in-motion?
+        {:db (assoc db :selected-floors selected-floors
+                       :in-motion? true
+                       :next-stop (get-next-stop selected-floors current-floor new-direction)
+                       :direction new-direction)
+         :dispatch [:move-floor new-direction]}
+        {:db (assoc db :selected-floors selected-floors)}))))
 
 
-      (assoc db
-             :selected-floors selected-floors
-             :in-motion? true
-             :next-stop (get-next-stop selected-floors current-floor new-direction)
-             :direction new-direction))))
 
 ;;subscriptions
 
@@ -110,6 +141,16 @@
   :direction
   (fn [db _]
     (:direction db)))
+
+(rf/reg-sub
+  :door-status
+  (fn [db _]
+    (:door-status db)))
+
+(rf/reg-sub
+  :at-stop?
+  (fn [db _]
+    (:at-stop? db)))
 
 (rf/reg-sub
   :common/error
