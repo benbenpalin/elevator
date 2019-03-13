@@ -12,21 +12,13 @@
 
 (rf/reg-event-db
   :set-init
-  (fn [db [_ docs]]
+  (fn [db _]
     (assoc db :selected-floors #{}
               :current-floor 1
               :in-motion? false
               :direction :up
               :door-status :closed
               :at-stop? false)))
-
-(rf/reg-event-fx
-  :fetch-docs
-  (fn [_ _]
-    {:http-xhrio {:method          :get
-                  :uri             "/docs"
-                  :response-format (ajax/raw-response-format)
-                  :on-success       [:set-init]}}))
 
 (rf/reg-event-db
   :common/set-error
@@ -85,11 +77,6 @@
   :page
   (fn [db _]
     (:page db)))
-
-(rf/reg-sub
-  :docs
-  (fn [db _]
-    (:docs db)))
 
 (rf/reg-sub
   :selected-floors
