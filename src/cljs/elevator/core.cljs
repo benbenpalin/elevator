@@ -11,21 +11,28 @@
             [secretary.core :as secretary])
   (:import goog.History))
 
-; the navbar components are implemented via baking-soda [1]
-; library that provides a ClojureScript interface for Reactstrap [2]
-; Bootstrap 4 components.
-; [1] https://github.com/gadfly361/baking-soda
-; [2] http://reactstrap.github.io/
-
-(defn about-page []
-  [:div.container
-   "About"])
+(def elevator-numbers (range 1 10))
 
 (defn floor-button [floor-number]
-  [:span {:on-click #(rf/dispatch [:select-new-floor floor-number]) :style {:padding-right "100px" :cursor "pointer"}}
+  [:span.button {:style {:padding-right "20px" :cursor "pointer" :text-align "center"}}
    floor-number])
 
-(defn button-panel []
+(defn make-panel-row [buttons]
+  [:div
+   (for [b buttons]
+     [floor-button b])])
+
+(defn make-panel [buttons]
+  [:div
+   (->> buttons
+        (partition 3)
+        (map make-panel-row))])
+
+(defn button-panel [numbers]
+  [:div {:style {:margin-top "15vh" :text-align "center"}}
+   (make-panel numbers)])
+
+(defn display []
   (let [selected-floors @(rf/subscribe [:selected-floors])
         in-motion?      @(rf/subscribe [:in-motion?])
         current-floor   @(rf/subscribe [:current-floor])
@@ -34,24 +41,28 @@
         door-status     @(rf/subscribe [:door-status])
         at-stop?     @(rf/subscribe [:at-stop?])]
     [:div
-     [:div
-      [floor-button 1]
-      [floor-button 2]]
-     [:div
-      [floor-button 3]
-      [floor-button 4]]
-     [:div (str "floor selected is " selected-floors)]
-     [:div (str "Is the elevator in motion? " in-motion?)]
-     [:div (str "what is the current floor " current-floor)]
-     [:div (str "next stop: " next-stop)]
-     [:div (str "Elevator is going " direction)]
-     [:div (str "door is " door-status)]
-     [:div (str "at a stop? " at-stop?)]]))
+     [:div (str selected-floors)]
+     [:div (str current-floor)]
+     [:div door-status]]))
+
+(defn empty-left []
+  [:div.empty-left {:style {:width "25%" :display "inline-block" :border "1px solid black" :height "100%"}}])
+
+(defn doors []
+  [:div.doors {:style {:width "50%" :display "inline-block" :border "1px solid black" :height "100%"}}])
+
+(defn panel-right []
+  [:div {:style {:width "25%" :display "inline-block" :border "1px solid black" :height "100%"}}
+   [button-panel elevator-numbers]])
 
 (defn home-page []
-  [:div.container
-   "Elevator"
-   [button-panel]])
+  [:div.container {:style {:margin "40px auto 0 auto" :display "block"}}
+   [:div.elevator {:style {:text-align "center" :border "1px solid black" :height "90vh" :width "90vh"}}
+    [display]
+    [:div {:style {:height "100%" :width "100%"}}
+     [empty-left]
+     [doors]
+     [panel-right]]]])
 
 (def pages
   {:home #'home-page})

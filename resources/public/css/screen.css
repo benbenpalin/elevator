@@ -7,3 +7,9 @@ nav {
     margin-bottom: 20px;
 }
 
+.button {
+    border: 1px black solid;
+    border-radius: 50%;
+    width: 30px;
+    height 30px
+}
