@@ -1,7 +1,7 @@
 (ns elevator.events
   (:require [re-frame.core :as rf]
             [ajax.core :as ajax]
-            [elevator.event-util :refer :all]))
+            [elevator.event-util :as u]))
 
 ;;dispatchers
 
@@ -36,8 +36,8 @@
   (fn [{:keys [db]}]
     (let [{:keys [selected-floors direction current-floor]} db]
       (if (seq selected-floors)
-        (let [new-direction (in-motion-new-direction db)
-              next-stop (get-next-stop selected-floors current-floor new-direction)]
+        (let [new-direction (u/in-motion-new-direction db)
+              next-stop (u/get-next-stop selected-floors current-floor new-direction)]
           {:db (assoc db :door-status :closed :direction new-direction :next-stop next-stop)
            :dispatch [:move-floor new-direction]})
         {:db (assoc db :door-status :closed :in-motion? false :next-stop nil)}))))
@@ -50,8 +50,8 @@
 (rf/reg-event-fx
   :change-floor
   (fn [{:keys [db]} [_ direction]]
-    (let [direction-fn (direction-fn direction)]
-      (if (not (at-next-stop? db))
+    (let [direction-fn (u/direction-fn direction)]
+      (if (not (u/at-next-stop? db))
         {:db (update db :current-floor direction-fn)
          :dispatch [:move-floor direction]}
         {:db (update db :selected-floors #(disj % (:current-floor db)))
@@ -62,11 +62,11 @@
   (fn [{:keys [db]} [_ floor]]
     (let [{:keys [selected-floors current-floor in-motion?]} db
           selected-floors (conj selected-floors floor)
-          new-direction (standing-still-new-direction current-floor floor)]
+          new-direction (u/standing-still-new-direction current-floor floor)]
       (if-not in-motion?
         {:db (assoc db :selected-floors selected-floors
                        :in-motion? true
-                       :next-stop (get-next-stop selected-floors current-floor new-direction)
+                       :next-stop (u/get-next-stop selected-floors current-floor new-direction)
                        :direction new-direction)
          :dispatch [:move-floor new-direction]}
         {:db (assoc db :selected-floors selected-floors)}))))
