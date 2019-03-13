@@ -15,7 +15,7 @@
 
 (defn floor-button [floor-number]
   (let [selected-floors @(rf/subscribe [:selected-floors])]
-    [:span {:on-click #(rf/dispatch [:select-new-floor floor-number]) :style {:padding "0 20px" :cursor "pointer" :color (if (selected-floors floor-number)
+    [:span {:on-click #(rf/dispatch [:select-new-floor floor-number]) :style {:padding "0 20px" :cursor "pointer" :color (if (get selected-floors floor-number)
                                                                                                                            "red"
                                                                                                                            "black")}}
      floor-number]))
