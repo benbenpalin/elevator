@@ -1,0 +1,1 @@
+{:output-to "target/test.js", :main "elevator.doo-runner", :optimizations :whitespace, :pretty-print true, :watch-fn #object[user$eval35602$fn__35611 0x5966bae "user$eval35602$fn__35611@5966bae"], :verbose true}

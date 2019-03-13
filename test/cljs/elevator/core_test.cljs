@@ -4,6 +4,6 @@
             [reagent.core :as reagent :refer [atom]]
             [elevator.core :as rc]))
 
-(deftest test-home
-  (is (= true true)))
+;(deftest test-home
+;  (is (= true true)))
 

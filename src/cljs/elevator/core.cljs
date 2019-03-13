@@ -17,25 +17,6 @@
 ; [1] https://github.com/gadfly361/baking-soda
 ; [2] http://reactstrap.github.io/
 
-(defn nav-link [uri title page]
-  [b/NavItem
-   [b/NavLink
-    {:href   uri
-     :active (when (= page @(rf/subscribe [:page])) "active")}
-    title]])
-
-(defn navbar []
-  (r/with-let [expanded? (r/atom true)]
-    [b/Navbar {:light true
-               :class-name "navbar-dark bg-primary"
-               :expand "md"}
-     [b/NavbarBrand {:href "/"} "elevator"]
-     [b/NavbarToggler {:on-click #(swap! expanded? not)}]
-     [b/Collapse {:is-open @expanded? :navbar true}
-      [b/Nav {:class-name "mr-auto" :navbar true}
-       [nav-link "#/" "Home" :home]
-       [nav-link "#/about" "About" :about]]]]))
-
 (defn about-page []
   [:div.container
    "About"])
@@ -44,15 +25,14 @@
   [:span {:on-click #(rf/dispatch [:select-new-floor floor-number]) :style {:padding-right "100px" :cursor "pointer"}}
    floor-number])
 
-;(defn going-up []
-;  (repeatedly (js/setTimeout #(rf/dispatch [:increase-floor]) 1000)))
-
 (defn button-panel []
   (let [selected-floors @(rf/subscribe [:selected-floors])
         in-motion?      @(rf/subscribe [:in-motion?])
         current-floor   @(rf/subscribe [:current-floor])
         next-stop       @(rf/subscribe [:next-stop])
-        direction       @(rf/subscribe [:direction])]
+        direction       @(rf/subscribe [:direction])
+        door-status     @(rf/subscribe [:door-status])
+        at-stop?     @(rf/subscribe [:at-stop?])]
     [:div
      [:div
       [floor-button 1]
@@ -65,8 +45,8 @@
      [:div (str "what is the current floor " current-floor)]
      [:div (str "next stop: " next-stop)]
      [:div (str "Elevator is going " direction)]
-     [:span {:on-click #(rf/dispatch [:increase-floor]) :style {:padding-right "100px" :cursor "pointer"}}
-      "click for new floor"]]))
+     [:div (str "door is " door-status)]
+     [:div (str "at a stop? " at-stop?)]]))
 
 (defn home-page []
   [:div.container
@@ -74,12 +54,10 @@
    [button-panel]])
 
 (def pages
-  {:home #'home-page
-   :about #'about-page})
+  {:home #'home-page})
 
 (defn page []
   [:div
-   [navbar]
    [(pages @(rf/subscribe [:page]))]])
 
 ;; -------------------------
@@ -89,9 +67,6 @@
 
 (secretary/defroute "/" []
   (rf/dispatch [:navigate :home]))
-
-(secretary/defroute "/about" []
-  (rf/dispatch [:navigate :about]))
 
 ;; -------------------------
 ;; History
@@ -113,6 +88,6 @@
 (defn init! []
   (rf/dispatch-sync [:navigate :home])
   (ajax/load-interceptors!)
-  (rf/dispatch [:fetch-docs])
+  (rf/dispatch [:set-init])
   (hook-browser-navigation!)
   (mount-components))

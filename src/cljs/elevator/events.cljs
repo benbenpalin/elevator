@@ -1,6 +1,7 @@
 (ns elevator.events
   (:require [re-frame.core :as rf]
-            [ajax.core :as ajax]))
+            [ajax.core :as ajax]
+            [elevator.event-util :as u]))
 
 ;;dispatchers
 
@@ -11,68 +12,64 @@
 
 (rf/reg-event-db
   :set-init
-  (fn [db [_ docs]]
-    (assoc db :docs docs
-              :selected-floors #{}
+  (fn [db _]
+    (assoc db :selected-floors #{}
               :current-floor 1
               :in-motion? false
-              :direction :up)))
-
-(rf/reg-event-fx
-  :fetch-docs
-  (fn [_ _]
-    {:http-xhrio {:method          :get
-                  :uri             "/docs"
-                  :response-format (ajax/raw-response-format)
-                  :on-success       [:set-init]}}))
+              :direction :up
+              :door-status :closed
+              :at-stop? false)))
 
 (rf/reg-event-db
   :common/set-error
   (fn [db [_ error]]
     (assoc db :common/error error)))
 
-(defn get-next-stop
-  "Takes the set of selected floors, the current floor the elevator is at, and the direction the elevator is going, and returns the next floor the elevator will stop at"
-  [floor-set current-floor direction]
-  (if (= direction :up)
-    (->> floor-set
-         (filter #(> % current-floor))
-         (sort)
-         (first))
-    (->> floor-set
-         (filter #(< % current-floor))
-         (sort)
-         (last))))
+(rf/reg-event-fx
+  :open-doors
+  (fn [{:keys [db]}]
+    {:db (assoc db :door-status :open)
+     :dispatch-later [{:ms 2000 :dispatch [:close-doors]}]}))
 
 (rf/reg-event-fx
-  :hit-button
+  :close-doors
   (fn [{:keys [db]}]
-    {:dispatch-later [{:ms 1000 :dispatch [:increase-floor]}]}))
+    (let [{:keys [selected-floors direction current-floor]} db]
+      (if (seq selected-floors)
+        (let [new-direction (u/in-motion-new-direction db)
+              next-stop (u/get-next-stop selected-floors current-floor new-direction)]
+          {:db (assoc db :door-status :closed :direction new-direction :next-stop next-stop)
+           :dispatch [:move-floor new-direction]})
+        {:db (assoc db :door-status :closed :in-motion? false :next-stop nil)}))))
 
 (rf/reg-event-fx
-  :increase-floor
-  (fn [{:keys [db]}]
-    (if (not= (:next-stop db) (:current-floor db))
-      {:db (update db :current-floor inc)
-       :dispatch [:hit-button]})))
+  :move-floor
+  (fn [{:keys [db]} [_ direction]]
+    {:dispatch-later [{:ms 1000 :dispatch [:change-floor direction]}]}))
 
-(rf/reg-event-db
+(rf/reg-event-fx
+  :change-floor
+  (fn [{:keys [db]} [_ direction]]
+    (let [direction-fn (u/direction-fn direction)]
+      (if (not (u/at-next-stop? db))
+        {:db (update db :current-floor direction-fn)
+         :dispatch [:move-floor direction]}
+        {:db (update db :selected-floors #(disj % (:current-floor db)))
+         :dispatch [:open-doors]}))))
+
+(rf/reg-event-fx
   :select-new-floor
-  (fn [db [_ floor]]
-    (let [{:keys [selected-floors in-motion? direction current-floor]} db
+  (fn [{:keys [db]} [_ floor]]
+    (let [{:keys [selected-floors current-floor in-motion?]} db
           selected-floors (conj selected-floors floor)
-          new-direction (if in-motion?
-                          direction
-                          (if (> floor current-floor)
-                            :up
-                            :down))]
-
-
-      (assoc db
-             :selected-floors selected-floors
-             :in-motion? true
-             :next-stop (get-next-stop selected-floors current-floor new-direction)
-             :direction new-direction))))
+          new-direction (u/standing-still-new-direction current-floor floor)]
+      (if-not in-motion?
+        {:db (assoc db :selected-floors selected-floors
+                       :in-motion? true
+                       :next-stop (u/get-next-stop selected-floors current-floor new-direction)
+                       :direction new-direction)
+         :dispatch [:move-floor new-direction]}
+        {:db (assoc db :selected-floors selected-floors)}))))
 
 ;;subscriptions
 
@@ -80,11 +77,6 @@
   :page
   (fn [db _]
     (:page db)))
-
-(rf/reg-sub
-  :docs
-  (fn [db _]
-    (:docs db)))
 
 (rf/reg-sub
   :selected-floors
@@ -110,6 +102,16 @@
   :direction
   (fn [db _]
     (:direction db)))
+
+(rf/reg-sub
+  :door-status
+  (fn [db _]
+    (:door-status db)))
+
+(rf/reg-sub
+  :at-stop?
+  (fn [db _]
+    (:at-stop? db)))
 
 (rf/reg-sub
   :common/error
