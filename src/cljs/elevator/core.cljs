@@ -17,25 +17,6 @@
 ; [1] https://github.com/gadfly361/baking-soda
 ; [2] http://reactstrap.github.io/
 
-(defn nav-link [uri title page]
-  [b/NavItem
-   [b/NavLink
-    {:href   uri
-     :active (when (= page @(rf/subscribe [:page])) "active")}
-    title]])
-
-(defn navbar []
-  (r/with-let [expanded? (r/atom true)]
-    [b/Navbar {:light true
-               :class-name "navbar-dark bg-primary"
-               :expand "md"}
-     [b/NavbarBrand {:href "/"} "elevator"]
-     [b/NavbarToggler {:on-click #(swap! expanded? not)}]
-     [b/Collapse {:is-open @expanded? :navbar true}
-      [b/Nav {:class-name "mr-auto" :navbar true}
-       [nav-link "#/" "Home" :home]
-       [nav-link "#/about" "About" :about]]]]))
-
 (defn about-page []
   [:div.container
    "About"])
@@ -73,12 +54,10 @@
    [button-panel]])
 
 (def pages
-  {:home #'home-page
-   :about #'about-page})
+  {:home #'home-page})
 
 (defn page []
   [:div
-   [navbar]
    [(pages @(rf/subscribe [:page]))]])
 
 ;; -------------------------
@@ -88,9 +67,6 @@
 
 (secretary/defroute "/" []
   (rf/dispatch [:navigate :home]))
-
-(secretary/defroute "/about" []
-  (rf/dispatch [:navigate :about]))
 
 ;; -------------------------
 ;; History
